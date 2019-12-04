@@ -1,0 +1,511 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script src="https://github.com/processing/p5.js/releases/download/0.5.16/p5.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.sound.min.js"></script>
+  <script>
+  
+        var idleD = [];
+        var idleE = [];
+        var runD = [];
+        var runE = [];
+        var jumpD = []
+        var jumpE = []
+        var attD = []
+        var attE = []
+        var orkidleD = []
+        var orkidleE = []
+        var orkwalkD = []
+        var orkwalkE = []
+        var back
+        var wall
+        var heart
+        var door
+        var lava = []
+        function preload() {
+          back = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/Background.png')
+          wall = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/tile5.png')
+          heart = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/000_0065_heart.png')
+          door = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/door.png')
+
+          for(i=0;i<2;i++) {
+            lava[i] = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/lava_tile'+(i+1)+'.png')
+          }
+          for(i=0;i<7;i++) {
+            idleD[i] = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/_IDLE/_IDLE_00'+i+'.png');
+            idleE[i] = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/_IDLE/_IDLE_00'+i+'%20(2).png')
+            runD[i] = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/_RUN/_RUN_00'+i+'.png')
+            runE[i] = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/_RUN/_RUN_00'+i+'%20(2).png')
+          jumpD[i] = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/_JUMP/_JUMP_00'+i+'.png')
+          jumpE[i] = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/_JUMP/_JUMP_00'+i+'%20(2).png')
+          attD[i] = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/_ATTACK/ATTACK_00'+i+'.png')
+          attE[i] = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/_ATTACK/ATTACK_00'+i+'%20(2).png')
+            orkidleD[i] = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/IDLE/IDLE_00'+i+'.png')
+            orkidleE[i] = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/IDLE/IDLE_00'+i+'%20(2).png')
+            orkwalkD[i] = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/WALK/WALK_00'+i+'.png')
+            orkwalkE[i] = loadImage('https://raw.githubusercontent.com/mwleal/bob/master/WALK/WALK_00'+i+'%20(2).png')
+          }
+        }
+
+
+
+
+        function setup() {
+          createCanvas(1200, 550);
+        }
+
+          var x = 0;
+          var y = 0;
+          var lado = 1;
+          var ladoork = 0;
+          var vida = 3;
+          var pulo = 0;
+          var contd = 0;
+          var conta = 0;
+          var start = 0;
+          var x1 = 0;
+          var y1 = 0;
+          var contidle = 0;
+          var contrun = 0;
+          var orkmov = 0;
+          var contorkwalk = 0;
+          var magma = 0
+        var telaAtiva = 1
+        function draw() {
+           switch(telaAtiva) {
+            case 1:
+              inicio();
+              break;
+            case 2:
+              intro();
+              break;
+            case 3:
+              torre();
+              break;
+           }
+        }
+        function keyPressed() {
+            if(keyCode === ENTER && telaAtiva===1){
+              telaAtiva = 2
+          }
+        }
+
+
+
+
+        function inicio() {
+          let tela = 1
+          background('green');
+          fill(200,0,0)
+          textSize(20);
+          text('aperte enter para começar',475 , 450);
+          textSize(40)
+          textStyle(BOLD)
+          text('Torre da matemática',410,100)  
+
+        }
+
+
+
+
+        function torre() {
+
+          //Setup inicial da fase
+
+          if(start == 0) {
+            x = 51;
+            y = 451;
+            lado = 1;
+            vida = 3;
+            x1 = 875;
+            y1 = 451;
+            start = 1;
+          }
+
+
+          let map = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,3,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,2,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1],
+            [1,0,0,0,0,0,3,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,2,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+          ];
+          var tileSize=50;
+          background(220);
+          for (let i = 0; i < map.length; i++) {
+            for (let j = 0; j < map[i].length; j++) {
+              if (map[i][j] === 1) {
+                fill(150, 0, 0);
+                rect(j * tileSize, i * tileSize, tileSize, tileSize);
+              }
+              if (map[i][j] === 2) {
+                fill(0, 150, 0);
+                rect(j * tileSize, i * tileSize, tileSize, tileSize);
+              }
+              if (map[i][j] === 3) {
+                fill(0, 150, 150);
+                rect(j * tileSize, i * tileSize, tileSize, tileSize);
+              }
+            }
+          }
+
+
+
+
+          if (keyIsDown(LEFT_ARROW) && !bateuNoMapa(x-5,y)) {
+            x-=5;
+          }
+          if (keyIsDown(RIGHT_ARROW)&& !bateuNoMapa(x+5,y)  ){
+            x+=5;
+          }
+          if (!bateuNoMapa(x,y+5)&& !escada(x,y+5)) {
+            y+=5;
+          }
+          if (keyIsDown(DOWN_ARROW) && !bateuNoMapa(x,y+5)&& escada(x,y+5)) {
+            y+=5;
+          }
+          if (keyIsDown(UP_ARROW) && !bateuNoMapa(x,y-5)&& escada(x,y+5)) {
+            y-=5;
+          }
+          fill(0, 0, 250);
+          rect(x, y, 48, 48);
+
+
+
+
+
+          function bateuNoMapa(a, b) {
+            let bateu=false; 
+            for (var i = 0; i < map.length; i++) {
+              for (var j = 0; j < map[i].length; j++) {
+                if(map[i][j]==1 && colisao(a,b,j * tileSize,i * tileSize)){
+                  bateu=true;
+                  return bateu;
+                }
+              }
+            }
+            return bateu;
+          }
+
+          function escada(a, b) {
+            let stair=false; 
+            for (var i = 0; i < map.length; i++) {
+              for (var j = 0; j < map[i].length; j++) {
+                if(map[i][j]==2 && colisao(a,b,j * tileSize,i * tileSize)){
+                  stair=true;
+                  return stair;
+                }
+              }
+            }
+            return stair;
+          }
+
+          function porta(a, b) {
+            let door=false; 
+            for (var i = 0; i < map.length; i++) {
+              for (var j = 0; j < map[i].length; j++) {
+                if(map[i][j]==3 && colisao(a,b,j * tileSize,i * tileSize)){
+                  door=true;
+                  return door;
+                }
+              }
+            }
+            return door;
+          }
+          function colisao(x1,y1,x2,y2) {
+            if(x1 > x2 + 48)
+              return false;
+            if(y1 > y2 + 48)
+              return false;
+            if(x1 + 48 < x2)
+              return false;
+            if(y1 + 48 < y2)
+              return false;
+            return true;
+          }
+        }
+
+
+
+
+
+
+        function intro() {
+
+          //Setup inicial da fase
+
+          if(start == 0) {
+            x = 51;
+            y = 451;
+            lado = 1;
+            vida = 3;
+            x1 = 875;
+            y1 = 451;
+            start = 1;
+            contidle = 0;
+            ladoork = 0;
+            orkmov = 0;
+            magma = 0;
+          }
+
+          //Desenhos
+
+          let map = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,3,0,0,0,0,0,0,0,0,5,0,0,0,0,0,7,0,0,0,0,0,0,1],
+            [1,4,0,0,0,0,0,0,0,0,6,0,0,0,0,0,8,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,1,1,2,2,1,1,0,0,0,0,0,0,9,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+          ];
+          var tileSize=50;
+          background(back);
+          for (let i = 0; i < map.length; i++) {
+            for (let j = 0; j < map[i].length; j++) {
+              if (map[i][j] === 1) {
+                image(wall,j * tileSize, i * tileSize, tileSize, tileSize);
+              }
+              if (map[i][j] === 2) {
+                  image(lava[0],j * tileSize, i * tileSize, tileSize, tileSize);  
+              }
+              if (map[i][j] === 3) {
+                fill(255,255,255)
+                textSize(20); 
+                text('Use as setas direcionais',j * tileSize, i * tileSize);
+              }
+              if (map[i][j] === 4) {
+                textSize(20); 
+                text('      para movimentar',j * tileSize, i * tileSize);
+              }
+              if (map[i][j] === 5) {
+                textSize(20); 
+                text('Aperte para cima',j * tileSize, i * tileSize);
+              }
+              if (map[i][j] === 6) {
+                textSize(20); 
+                text('      para pular',j * tileSize, i * tileSize);
+              }
+              if (map[i][j] === 7) {
+                textSize(20); 
+                text('Aperte a barra de espaço para',j * tileSize, i * tileSize);
+              }
+              if (map[i][j] === 8) {
+                textSize(20); 
+                text('atacar e interagir com objetos',j * tileSize, i * tileSize);
+              }
+                  if (map[i][j] === 9) {
+                image(door,j * tileSize, i * tileSize-50, 100, 125);
+              }
+
+            }
+          }
+
+
+        if(vida > 0)
+          image(heart,55,60,25,25)
+        if(vida > 1)
+          image(heart,80,60,25,25)
+        if(vida > 2)
+          image(heart,105,60,25,25)
+
+
+
+          //Comandos do personagem
+
+          if (keyIsDown(LEFT_ARROW)) {
+            if(!bateuNoMapa(x-5,y))
+              x-=5;
+            lado = 0;
+            if(bateuNoMapa(x,y+5) && contd%10!=1 && conta == 0) {
+              image(runE[Math.floor(contrun/5)],x-50,y-50,100,100);
+              contrun++
+            }
+          }
+          if (keyIsDown(RIGHT_ARROW)){
+            if(!bateuNoMapa(x+5,y))
+              x+=5;
+            lado = 1;
+            if(bateuNoMapa(x,y+5) && contd%10!=1 && conta == 0) {
+              image(runD[Math.floor(contrun/5)],x,y-50,100,100);
+              contrun++
+            }
+          }
+          if (!bateuNoMapa(x,y+5)) {
+            y+=5;
+            if(lado == 1 && contd%10!=1 && conta == 0)
+              image(jumpD[Math.floor(pulo/5)],x,y-65,100,130);
+            if(lado == 0 && contd%10!=1 && conta == 0)
+              image(jumpE[Math.floor(pulo/5)],x-50,y-65,100,130);
+          }
+           else
+            pulo = 0
+
+          if (keyIsDown(UP_ARROW) && !bateuNoMapa(x,y-20)&& pulo<30) {
+            y-=10;
+            pulo++
+          } else {
+            pulo = 30
+          }
+
+          if(keyIsDown(32) && conta == 0) 
+          conta = 30;
+
+          if(conta == 1) {
+            if(lado == 1) {
+              if(colisao(x+50,y,x1,y1))
+                 x1 = 2000
+            }
+            if(lado == 0) {
+                if(colisao(x-50,y,x1,y1))
+                 x1 = 2000
+            }
+          }
+
+          if(conta !=0) {
+            if(lado == 1) 
+              image(attD[Math.floor(conta/5)],x,y-50,100,100)
+            if(lado == 0) 
+              image(attE[Math.floor(conta/5)],x-50,y-50,100,100)
+          }
+          if(keyIsDown(32) && x1 == 2000 && porta(x,y)) {
+            start = 0
+            telaAtiva = 3
+          }
+
+          //Movimentação automatica do inimigo
+
+          if(x<x1+200 && x>x1) {
+            if(!bateuNoMapa(x1+5,y1))
+              x1+=1
+            ladoork = 1;
+            orkmov++
+            image(orkwalkD[Math.floor(orkmov/5)],x1,y1-50,100,100)
+          }
+          if(x>x1-200 && x<x1) {
+            if(!bateuNoMapa(x1-5,y1))
+              x1-=1
+            ladoork = 0;
+            orkmov++
+            image(orkwalkE[Math.floor(orkmov/5)],x1-50,y1-50,100,100)
+          }
+          //Contadores
+
+          if(contd>0) {
+            contd--;
+          }
+          if(conta>0) {
+            conta--;
+          }
+          if(contidle>30) {
+            contidle=0
+          }
+          if(contrun>30) {
+            contrun = 0
+          }
+          if(orkmov>30) {
+            orkmov = 0
+          }
+
+          //Dano
+
+          if(dano(x,y) && contd == 0) {
+            vida--;
+            contd = 60;
+          }
+
+          if(vida == 0) {
+            start = 0;
+          }
+
+          if(colisao(x,y,x1,y1) && contd == 0) {
+             vida--;
+            contd = 60;
+             }
+
+          //Personagens
+
+
+          if(lado == 1 && bateuNoMapa(x,y+5) && conta == 0 && !keyIsDown(LEFT_ARROW) && !keyIsDown(RIGHT_ARROW) && contd%10!=1) {
+            image(idleD[Math.floor(contidle/5)],x,y-50,100,100);
+            contrun = 0;
+          }
+          if(lado == 0 && bateuNoMapa(x,y+5) && conta == 0 && !keyIsDown(LEFT_ARROW) && !keyIsDown(RIGHT_ARROW) && contd%10!=1) {
+            image(idleE[Math.floor(contidle/5)],x-50,y-50,100,100);
+            contrun = 0;
+          }
+
+          contidle++
+
+          if(x+200<x1 || x1+200<x) {
+            if(ladoork == 0)
+              image(orkidleE[Math.floor(contidle/5)],x1-50, y1-50, 100, 100);
+            if(ladoork == 1)
+              image(orkidleD[Math.floor(contidle/5)],x1, y1-50, 100, 100);
+          }
+
+          //Funções
+
+          function bateuNoMapa(a, b) {
+            let bateu=false; 
+            for (var i = 0; i < map.length; i++) {
+              for (var j = 0; j < map[i].length; j++) {
+                if(map[i][j]==1 && colisao(a,b,j * tileSize,i * tileSize)){
+                  bateu=true;
+                  return bateu;
+                }
+              }
+            }
+            return bateu;
+          }
+
+          function porta(a, b) {
+            let door=false; 
+            for (var i = 0; i < map.length; i++) {
+              for (var j = 0; j < map[i].length; j++) {
+                if(map[i][j]==9 && colisao(a,b,j * tileSize,i * tileSize)){
+                  door=true;
+                  return door;
+                }
+              }
+            }
+            return door;
+          }
+
+          function dano(a, b) {
+            let damage=false; 
+            for (var i = 0; i < map.length; i++) {
+              for (var j = 0; j < map[i].length; j++) {
+                if(map[i][j]==2 && colisao(a,b,j * tileSize,i * tileSize)){
+                  damage=true;
+                  return damage;
+                }
+              }
+            }
+            return damage;
+          }
+
+          function colisao(x1,y1,x2,y2) {
+            if(x1 > x2 + 45)
+              return false;
+            if(y1 > y2 + 45)
+              return false;
+            if(x1 + 45 < x2)
+              return false;
+            if(y1 + 45 < y2)
+              return false;
+            return true;
+          }
+        }
+  </script>
+</html>
